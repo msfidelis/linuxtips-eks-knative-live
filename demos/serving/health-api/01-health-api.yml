@@ -14,7 +14,7 @@ spec:
         prometheus.io/port: "8080"
         autoscaling.knative.dev/target: "6"                   # Número de requisições por pod
         autoscaling.knative.dev/metric: "rps"                 # Autoscaling por requests por segundo
-        autoscaling.knative.dev/minScale: "1"                 # Mínimo de réplicas: 0 (permite escalar para zero)
+        autoscaling.knative.dev/minScale: "0"                 # Mínimo de réplicas: 0 (permite escalar para zero)
         autoscaling.knative.dev/maxScale: "10"                # Máximo de réplicas
         autoscaling.knative.dev/window: "30s"                 # Janela de observação para o autoscaler
         autoscaling.knative.dev/scale-to-zero-threshold: "5m" # Tempo de inatividade antes de escalar para zero          
