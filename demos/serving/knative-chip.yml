@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chip
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: chip
+  namespace: chip
+  annotations:
+    networking.knative.dev/ingress.class: "kourier.ingress.networking.knative.dev" 
+    serving.knative.dev/visibility: "external"   
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/target: "1"                   # Número de requisições por pod
+        autoscaling.knative.dev/metric: "rps"                 # Autoscaling por requests por segundo
+        autoscaling.knative.dev/minScale: "0"                 # Mínimo de réplicas: 0 (permite escalar para zero)
+        autoscaling.knative.dev/maxScale: "10"                # Máximo de réplicas
+        autoscaling.knative.dev/window: "30s"                 # Janela de observação para o autoscaler
+        autoscaling.knative.dev/scale-to-zero-threshold: "5m" # Tempo de inatividade antes de escalar para zero  
+    spec:
+      containers:
+        - image: fidelissauro/chip:v2
+          env:
+            - name: VERSION
+              value: "v3"        
+          ports:
+            - containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+---
+apiVersion: networking.internal.knative.dev/v1alpha1
+kind: ClusterDomainClaim
+metadata:
+  name: chip.k8s.com
+spec:
+  namespace: chip
+--- 
+apiVersion: serving.knative.dev/v1beta1
+kind: DomainMapping
+metadata:
+  name: chip.k8s.com
+  namespace: chip
+spec:
+  ref:
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    name: chip
