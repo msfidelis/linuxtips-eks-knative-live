@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "knative.fullname" . }}-config-logging
+  labels:
+  {{- include "knative.labels" . | nindent 4 }}
+data:
+  _example: {{ .Values.configLogging.Example | toYaml | indent 1 }}

@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "knative.fullname" . }}-knative-serving-operator-aggregated-stable
+  labels:
+  {{- include "knative.labels" . | nindent 4 }}
+aggregationRule:
+  clusterRoleSelectors:
+  - matchExpressions:
+    - key: app.kubernetes.io/name
+      operator: In
+      values:
+      - knative-serving
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "knative.fullname" . }}-knative-serving-operator-aggregated-stable
+  labels:
+  {{- include "knative.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ include "knative.fullname" . }}-knative-serving-operator-aggregated-stable'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "knative.fullname" . }}-knative-operator'
+  namespace: '{{ .Release.Namespace }}'

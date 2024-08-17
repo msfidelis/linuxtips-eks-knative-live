@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "knative.fullname" . }}-operator-webhook
+  labels:
+    app.kubernetes.io/component: operator-webhook
+    role: operator-webhook
+  {{- include "knative.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.operatorWebhook.type }}
+  selector:
+    role: operator-webhook
+  {{- include "knative.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.operatorWebhook.ports | toYaml | nindent 2 }}

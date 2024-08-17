@@ -1,0 +1,33 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: bmr-grpc
+  namespace: health
+  annotations:
+    networking.knative.dev/ingress.class: "kourier.ingress.networking.knative.dev" 
+    serving.knative.dev/visibility: "internal"  
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "30000"
+        autoscaling.knative.dev/target: "1"                   # Número de requisições por pod
+        autoscaling.knative.dev/metric: "rps"                 # Autoscaling por requests por segundo
+        autoscaling.knative.dev/minScale: "0"                 # Mínimo de réplicas: 0 (permite escalar para zero)
+        autoscaling.knative.dev/maxScale: "10"                # Máximo de réplicas
+        autoscaling.knative.dev/window: "30s"                 # Janela de observação para o autoscaler
+        autoscaling.knative.dev/scale-to-zero-threshold: "2m" # Tempo de inatividade antes de escalar para zero          
+    spec:
+      containers:
+        - image: fidelissauro/bmr-grpc-service:latest
+          name: bmr-grpc
+          env:
+            - name: ENVIRONMENT
+              value: "dev"
+            - name: ZIPKIN_COLLECTOR_ENDPOINT
+              value: http://jaeger-collector.jaeger.svc.cluster.local:9411/api/v2/spans          
+          ports:
+            - containerPort: 30000
+              name: h2c
+              protocol: TCP

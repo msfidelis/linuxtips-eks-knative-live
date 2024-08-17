@@ -1,0 +1,388 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "knative.fullname" . }}-knative-eventing-operator
+  labels:
+  {{- include "knative.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - operator.knative.dev
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterroles
+  - roles
+  verbs:
+  - create
+  - delete
+  - escalate
+  - get
+  - list
+  - update
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - rolebindings
+  verbs:
+  - create
+  - delete
+  - list
+  - get
+  - update
+- apiGroups:
+  - apiregistration.k8s.io
+  resources:
+  - apiservices
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+- apiGroups:
+  - caching.internal.knative.dev
+  resources:
+  - images
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - daemonsets
+  - replicasets
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiregistration.k8s.io
+  resources:
+  - apiservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - create
+  - delete
+  - update
+  - get
+  - list
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - '*'
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - update
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resourceNames:
+  - knative-eventing-operator
+  resources:
+  - serviceaccounts
+  verbs:
+  - delete
+- apiGroups:
+  - rabbitmq.com
+  resources:
+  - rabbitmqclusters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rabbitmq.com
+  resources:
+  - bindings
+  - queues
+  - exchanges
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rabbitmq.com
+  resources:
+  - bindings/status
+  - queues/status
+  - exchanges/status
+  verbs:
+  - get
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects
+  - scaledobjects/finalizers
+  - scaledobjects/status
+  - triggerauthentications
+  - triggerauthentications/status
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - create
+  - delete
+- apiGroups:
+  - internal.kafka.eventing.knative.dev
+  resources:
+  - consumers
+  - consumers/status
+  - consumergroups
+  - consumergroups/status
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - patch
+  - update
+  - delete
+- apiGroups:
+  - internal.kafka.eventing.knative.dev
+  resources:
+  - consumers/finalizers
+  - consumergroups/finalizers
+  verbs:
+  - update
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets/scale
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - create
+  - delete
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  verbs:
+  - watch
+- apiGroups:
+  - '*'
+  resources:
+  - configmaps
+  verbs:
+  - delete
+- apiGroups:
+  - '*'
+  resources:
+  - configmaps
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - create
+  - delete
+- apiGroups:
+  - '*'
+  resources:
+  - pods
+  verbs:
+  - list
+  - update
+  - get
+  - watch
+- apiGroups:
+  - '*'
+  resources:
+  - pods/finalizers
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+- apiGroups:
+  - '*'
+  resources:
+  - events
+  verbs:
+  - patch
+  - create
+- apiGroups:
+  - '*'
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - create
+  - delete
+- apiGroups:
+  - '*'
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - '*'
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - create
+  - delete
+- apiGroups:
+  - '*'
+  resourceNames:
+  - kafka-channel-config
+  resources:
+  - configmaps
+  verbs:
+  - patch
+- apiGroups:
+  - '*'
+  resourceNames:
+  - kafka-webhook
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - delete
+- apiGroups:
+  - '*'
+  resources:
+  - leases
+  verbs:
+  - delete
+- apiGroups:
+  - '*'
+  resourceNames:
+  - kafka-webhook
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - delete
+- apiGroups:
+  - '*'
+  resources:
+  - services
+  verbs:
+  - patch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - deletecollection
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates
+  - issuers
+  - clusterissuers
+  verbs:
+  - create
+  - delete
+  - update
+  - list
+  - get
+  - watch
+- apiGroups:
+  - trust.cert-manager.io
+  resources:
+  - bundles
+  verbs:
+  - create
+  - delete
+  - update
+  - list
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "knative.fullname" . }}-knative-eventing-operator
+  labels:
+  {{- include "knative.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ include "knative.fullname" . }}-knative-eventing-operator'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "knative.fullname" . }}-knative-operator'
+  namespace: '{{ .Release.Namespace }}'

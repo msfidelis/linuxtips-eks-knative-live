@@ -10,7 +10,7 @@ metadata:
   namespace: pudim
   annotations:
     networking.knative.dev/ingress.class: "kourier.ingress.networking.knative.dev" 
-    serving.knative.dev/visibility: "external"
+    serving.knative.dev/visibility: "external" 
 spec:
   template:
     metadata:
@@ -25,31 +25,22 @@ spec:
       containers:
         - image: fidelissauro/pudim:latest
           env:
-            - name: VERSION
-              value: "v1"   
+            - name: NAME
+              value: "Knative User"
           ports:
             - containerPort: 80
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1000
-            capabilities:
-              drop:
-                - ALL
-            seccompProfile:
-              type: RuntimeDefault
 ---
 apiVersion: networking.internal.knative.dev/v1alpha1
 kind: ClusterDomainClaim
 metadata:
-  name: pudim.k8s.com
+  name: pudim.msfidelis.com.br
 spec:
   namespace: pudim
 --- 
 apiVersion: serving.knative.dev/v1beta1
 kind: DomainMapping
 metadata:
-  name: pudim.k8s.com
+  name: pudim.msfidelis.com.br
   namespace: pudim
 spec:
   ref:

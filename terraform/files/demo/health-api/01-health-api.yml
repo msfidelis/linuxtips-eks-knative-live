@@ -1,0 +1,48 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: health-api
+  namespace: health
+  annotations:
+    networking.knative.dev/ingress.class: "kourier.ingress.networking.knative.dev" 
+    serving.knative.dev/visibility: "external"
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        autoscaling.knative.dev/target: "6"                   # Número de requisições por pod
+        autoscaling.knative.dev/metric: "rps"                 # Autoscaling por requests por segundo
+        autoscaling.knative.dev/minScale: "0"                 # Mínimo de réplicas: 0 (permite escalar para zero)
+        autoscaling.knative.dev/maxScale: "10"                # Máximo de réplicas
+        autoscaling.knative.dev/window: "30s"                 # Janela de observação para o autoscaler
+        autoscaling.knative.dev/scale-to-zero-threshold: "5m" # Tempo de inatividade antes de escalar para zero          
+    spec:
+      containers:
+        - image: fidelissauro/health-api:latest
+          name: health-api
+          env:
+            - name: ENVIRONMENT
+              value: "dev"
+            - name: ZIPKIN_COLLECTOR_ENDPOINT
+              value: http://jaeger-collector.jaeger.svc.cluster.local:9411/api/v2/spans          
+            - name: BMR_SERVICE_ENDPOINT
+              value: "bmr-grpc.health.svc.cluster.local:80"
+            - name: IMC_SERVICE_ENDPOINT
+              value: "imc-grpc.health.svc.cluster.local:80"
+            - name: RECOMMENDATIONS_SERVICE_ENDPOINT
+              value: "recommendations-grpc.health.svc.cluster.local:80"                              
+          ports:
+            - containerPort: 8080
+          startupProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /healthcheck
+              port: 8080
+            periodSeconds: 10
+          livenessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /healthcheck
+              port: 8080

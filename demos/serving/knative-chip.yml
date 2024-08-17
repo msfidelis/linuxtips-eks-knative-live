@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/target: "1"                   # Número de requisições por pod
+        autoscaling.knative.dev/target: "0"                   # Número de requisições por pod
         autoscaling.knative.dev/metric: "rps"                 # Autoscaling por requests por segundo
         autoscaling.knative.dev/minScale: "0"                 # Mínimo de réplicas: 0 (permite escalar para zero)
         autoscaling.knative.dev/maxScale: "10"                # Máximo de réplicas
@@ -26,7 +26,7 @@ spec:
         - image: fidelissauro/chip:v2
           env:
             - name: VERSION
-              value: "v3"        
+              value: "v1"        
           ports:
             - containerPort: 8080
           securityContext:
